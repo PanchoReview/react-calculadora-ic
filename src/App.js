@@ -6,6 +6,7 @@ import Container from './components/Container'
 import Section from './components/Section'
 import { useState } from 'react'
 import Balance from './components/Balance'
+import * as Yup from 'yup'
 
 const compoundInterest = (deposit, contribution, years, rate) => {
   let total = deposit
@@ -41,16 +42,29 @@ const [balance, setBalance] = useState('')
           rate: ''
         }}
         onSubmit={handleSubmit}
+        validationSchema={
+          Yup.object({
+            deposit: Yup.number().required("Obligatorio").typeError("Debe ser un número"),
+            contribution: Yup.number().required("Obligatorio").typeError("Debe ser un número"),
+            years: Yup.number().required("Obligatorio").typeError("Debe ser un número"),
+            rate: Yup
+              .number()
+              .required("Obligatorio")
+              .typeError("Debe ser un número")
+              .min(0, "Valor mínimo es 0")
+              .max(1, "Valor máximo es 1")
+          })
+        }
         >
           <Form>
             <Input name="deposit" label="Deposito inicial"></Input>
             <Input name="contribution" label="Contribución anual"></Input>
             <Input name="years" label="Años"></Input>
             <Input name="rate" label="Interés estimado"></Input>
-            <Button>Calcular</Button>
+            <Button type="submit">Calcular</Button>
           </Form>
         </Formik>
-        {balance !== '' ? <Balance>`Balance final: {balance}`</Balance> : null}
+        {balance !== '' ? <Balance>Balance final: {balance}</Balance> : null}
       </Section>
     </Container>
   )
